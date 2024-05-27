@@ -6,16 +6,28 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:tailwind": "tailwindcss --input input.css --output tailwind.css --no-autoprefixer && tailwind-rn",
+    "dev:tailwind": "concurrently \"tailwindcss --input input.css --output tailwind.css --no-autoprefixer --watch\" \"tailwind-rn --watch\""
   },
   "dependencies": {
+    "axios": "^1.6.8",
+    "axios-auth-refresh": "^3.3.6",
     "expo": "~50.0.17",
+    "expo-secure-store": "^12.8.1",
     "expo-status-bar": "~1.11.1",
+    "nativewind": "^2.0.11",
     "react": "18.2.0",
-    "react-native": "0.73.6"
+    "react-native": "0.73.6",
+    "react-native-keychain": "^8.2.0",
+    "react-native-svg": "^15.3.0",
+    "tailwind-rn": "^4.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.3.2"
   },
   "private": true
 }
