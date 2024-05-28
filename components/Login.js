@@ -1,29 +1,46 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Alert, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
-import { AuthContext } from '../context/AuthContext';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { SvgUri } from 'react-native-svg'; // Importing SvgUri
+import { NavigationContainer } from '@react-navigation/native';
+import {AuthContext} from '../context/AuthContext';
+import {AxiosContext} from '../context/AxiosContext';
 import * as SecureStore from 'expo-secure-store';
-import { AxiosContext } from '../context/AxiosContext';
-import { useTailwind } from "tailwind-rn";
-import { SvgUri } from 'react-native-svg';
-import LocalImage from '../assets/SONEDE.svg'; // Make sure this path is correct and supports SVG
 
-
-const Login = () => {
+const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const authContext = useContext(AuthContext);
-    const { publicAxios } = useContext(AxiosContext);
-    const tailwind = useTailwind();
+       const [password, setPassword] = useState('');
+       const authContext = useContext(AuthContext);
+       const { publicAxios } = useContext(AxiosContext);
 
 
-    const onLogin = async () => {
-        try {
-            const response = await publicAxios.post('/auth/authenticate', {
-                email,
-                password,
-            });
 
-            const { accessToken, refreshToken } = response.data;
+       const onLogin = async () => {
+    /*       try {
+               const response = await publicAxios.post('/auth/authenticate', {
+                   email,
+                   password,
+               });
+
+               const { accessToken, refreshToken } = response.data;
+               authContext.setAuthState({
+                   accessToken,
+                   refreshToken,
+                   authenticated: true,
+               });
+
+               await SecureStore.setItemAsync('jwt', JSON.stringify({ accessToken, refreshToken }));
+           } catch (error) {
+               let message = "Unexpected error occurred.";
+               if (error.response && error.response.data && error.response.data.message) {
+                   message = error.response.data.message;
+               }
+               Alert.alert('Login Failed', message);
+           }*/
+
+            // Static values for accessToken and refreshToken
+            const accessToken = "your-static-access-token";
+            const refreshToken = "your-static-refresh-token";
+
             authContext.setAuthState({
                 accessToken,
                 refreshToken,
@@ -31,57 +48,91 @@ const Login = () => {
             });
 
             await SecureStore.setItemAsync('jwt', JSON.stringify({ accessToken, refreshToken }));
-        } catch (error) {
-            let message = "Unexpected error occurred.";
-            if (error.response && error.response.data && error.response.data.message) {
-                message = error.response.data.message;
-            }
-            Alert.alert('Login Failed', message);
-        }
-    };
-    <SvgUri
-        width="100"
-        height="100"
-        uri={require('../assets/SONEDE.svg')} // Update the path if necessary
-    />
+
+       };
 
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={tailwind('flex-1')}>
-            <View style={tailwind('flex-1 justify-center items-center px-4 bg-white mt-9')}>
-                <View style={tailwind('mb-4 items-center')}>
-                    <Image
-                        source={LocalImage}
-                        style={tailwind('h-50 w-full')} // Ensure this style adjusts the image properly
-                    />
-                    <Text style={tailwind('text-xl font-bold ')}>SONEDE</Text>
-                </View>
-                <Text style={tailwind('text-lg mb-2')}>Welcome Back</Text>
-                <TextInput
-                    style={tailwind('border border-gray-300 p-2 rounded-lg mb-4')}
-                    placeholder="Email"
-                    keyboardType="email-address"
-                    onChangeText={setEmail}
-                    value={email}
+        <View style={styles.container}>
+            <View style={styles.logoContainer}>
+                {/* Using SvgUri to display the SVG image */}
+                <SvgUri
+                    width="100" // Adjust the width as needed
+                    height="100" // Adjust the height as needed
+                    uri="https://upload.wikimedia.org/wikipedia/commons/1/17/SONEDE.svg"
                 />
-                <TextInput
-                    style={tailwind('border border-gray-300 p-2 rounded-lg mb-6')}
-                    placeholder="Password"
-                    secureTextEntry={true}
-                    onChangeText={setPassword}
-                    value={password}
-                />
-                <TouchableOpacity onPress={onLogin} style={tailwind('bg-blue-500 p-3 rounded-lg items-center mb-4')}>
-                    <Text style={tailwind('text-white text-lg')}>Sign In</Text>
-                </TouchableOpacity>
-                <Text style={tailwind('text-sm text-center')}>
-                    Don't have an account?
-                    <Text onPress={() => {/* navigation.navigate('SignUp') */}} style={tailwind('text-blue-500 underline')}>
-                        Sign Up here
-                    </Text>
-                </Text>
             </View>
-        </KeyboardAvoidingView>
+            <Text style={styles.welcomeBack}>Welcome Back</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Password"
+                secureTextEntry={true}
+                value={password}
+                onChangeText={setPassword}
+            />
+           <TouchableOpacity style={styles.button} onPress={onLogin}>
+                           <Text style={styles.buttonText}>Sign In</Text>
+                       </TouchableOpacity>
+    <TouchableOpacity
+        style={styles.linkButton}
+        onPress={() => navigation?.navigate('SignUp')}
+    >
+        <Text style={styles.signupLink}>Don't have an account? Sign Up here</Text>
+    </TouchableOpacity>
+        </View>
     );
 };
 
-export default Login;
+export default LoginScreen;
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+        padding: 20,
+    },
+    logoContainer: {
+        marginBottom: 20,
+    },
+    welcomeBack: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginVertical: 20,
+    },
+    input: {
+        width: '100%',
+        height: 40,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+    },
+    button: {
+        width: '100%',
+        height: 40,
+        backgroundColor: '#6200ee',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 4,
+        marginTop: 10,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    signupText: {
+        marginTop: 10,
+    },
+    signupLink: {
+        color: '#6200ee',
+        fontWeight: 'bold',
+    }
+});
