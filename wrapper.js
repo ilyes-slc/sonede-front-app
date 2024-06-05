@@ -44,7 +44,7 @@ const Wrapper = () => {
 
   useEffect(() => {
     loadJWT();
-  }, [loadJWT]);
+  }, []);
 
   if (status === 'loading') {
     return <Spinner />;
@@ -67,6 +67,7 @@ const Wrapper = () => {
               <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ title: 'Change Password' }} />
                             <Stack.Screen name="Profile" component={Profile} options={{ title: 'Profile' }} />
                             <Stack.Screen name="FactureItem" component={FactureItem} options={{ title: 'FactureItem' }} />
+
 
             </>
           )}

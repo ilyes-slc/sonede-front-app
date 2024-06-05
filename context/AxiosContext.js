@@ -11,11 +11,14 @@ const AxiosProvider = ({children}) => {
     const authContext = useContext(AuthContext);
 
     const authAxios = axios.create({
-        baseURL: 'http://localhost:8090/api/v1',
+        baseURL: 'http://192.168.1.233:8090/api/v1/',
+        // headers: {
+        //     'Authorization': `Bearer ${'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTcxNzYyMzkyOCwiZXhwIjoxNzE3NzEwMzI4fQ.XI67eJI9XMCUARPabhAtqtkFhIRHP9EfAqgERl4OGS4'}` 
+        // }
     });
 
     const publicAxios = axios.create({
-        baseURL: 'http://localhost:8090/api/v1',
+        baseURL: 'http://192.168.1.233:8090/api/v1/',
     });
 
     authAxios.interceptors.request.use(

@@ -11,11 +11,11 @@ const Formulaire = () => {
 
   const handleConfirm = () => {
     const newFacture = {
-      orderNumber,
       date,
       amount,
       status: isPaid ? 'payé' : 'non payé',
     };
+    //
     // Pass the new facture data back to the StaticFactureList screen
     navigation.navigate('StaticFactureList', { newFacture });
   };

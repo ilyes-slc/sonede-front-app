@@ -1,41 +1,64 @@
-// StaticFactureList.js
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity,Text } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { AxiosContext } from '../context/AxiosContext';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
-const FactureItem = ({ orderNumber, date, amount, status }) => {
-  return (
-    <View style={styles.factureContainer}>
-      <View style={styles.infoContainer}>
-        <Text style={styles.orderNumber}>
-          Order #: <Text style={styles.orderLink}>{orderNumber}</Text>
-        </Text>
-        <Text style={styles.date}>{date}</Text>
-      </View>
-      <Text style={styles.amount}>{amount} DT</Text>
-      <TouchableOpacity
-        style={[
-          styles.statusButton,
-          status === 'payé' ? styles.paye : styles.nonPaye,
-        ]}
-      >
-        <Text style={styles.statusText}>{status}</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+const FactureItem = () => {
+  const axiosContext = useContext(AxiosContext);
+  const navigation = useNavigation(); // Get the navigation object
+  const [facture, setFacture] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const StaticFactureList = () => {
-  const navigation = useNavigation();
+  useEffect(() => {
+    const fetchFacture = async () => {
+      try {
+        const response = await axiosContext.authAxios.get(`factures`);
+        setFacture(response.data);
+        setLoading(false);
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          console.error('Access denied. You might need to re-authenticate.');
+        }
+        console.error('Failed to fetch facture:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchFacture();
+  }, [axiosContext.authAxios]);
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (!facture || facture.length === 0) {
+    return <Text>No data found.</Text>;
+  }
 
   return (
     <View style={styles.container}>
-      <FactureItem orderNumber="001" date="2024-05-27" amount="150" status="payé" />
-      <FactureItem orderNumber="002" date="2024-05-26" amount="200" status="non payé" />
-      <FactureItem orderNumber="003" date="2024-05-25" amount="250" status="payé" />
-      <TouchableOpacity style={styles.plusButton} onPress={() => navigation.navigate('Formulaire')}>
-        <Ionicons name="add-circle" size={56} color="#6200ee" />
+      <View style={styles.factureContainer}>
+        <View style={styles.infoContainer}>
+          <Text style={styles.orderNumber}>
+            Order #: <Text style={styles.orderLink}>{facture[0].id}</Text>
+          </Text>
+          <Text style={styles.date}>{facture[0].period}</Text>
+        </View>
+        <Text style={styles.amount}>{facture[0].montant} DT</Text>
+        <TouchableOpacity
+          style={[
+            styles.statusButton,
+            facture[0].etat === 'payé' ? styles.paye : styles.nonPaye,
+          ]}
+        >
+          <Text style={styles.statusText}>{facture[0].etat}</Text>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate('Formulaire')} // Adjust 'Formulaire' as needed
+      >
+        <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
     </View>
   );
@@ -44,8 +67,8 @@ const StaticFactureList = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F4F8',
-    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   factureContainer: {
     flexDirection: 'row',
@@ -93,11 +116,21 @@ const styles = StyleSheet.create({
   statusText: {
     color: '#6200ee',
   },
-  plusButton: {
+  addButton: {
     position: 'absolute',
     bottom: 20,
     right: 20,
+    width: 50,
+    height: 50,
+    backgroundColor: '#6200ee',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+  addButtonText: {
+    fontSize: 24,
+    color: '#fff',
+  }
 });
 
-export default StaticFactureList;
+export default FactureItem;

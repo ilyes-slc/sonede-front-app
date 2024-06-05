@@ -1,11 +1,13 @@
 import React, { useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { ProfileContext } from '../context/ProfileContext'; // Import the ProfileContext
+import { ProfileContext } from '../context/ProfileContext';
+import {AuthContext} from "../context/AuthContext"; // Import the ProfileContext
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const { profile } = useContext(ProfileContext); // Access profile data from context
+  const authContext = useContext(AuthContext);
 
 
 
@@ -40,7 +42,7 @@ const ProfileScreen = () => {
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.logoutButton}
-       onPress={() => navigation.navigate('Login')}
+                        onPress={() => authContext.logout()}
 
 >
         <Text style={styles.logoutText}>Log Out</Text>

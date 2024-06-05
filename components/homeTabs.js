@@ -15,9 +15,9 @@ const HomeTabs = () => {
           let iconName;
 
           if (route.name === 'Dashboard') {
-            iconName = focused ? 'ios-home' : 'ios';
+            iconName = focused ? '' : '';
           } else if (route.name === 'FactureItem') {
-            iconName = focused ? 'ios-home' : 'ios';
+            iconName = focused ? '' : '';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -33,5 +33,4 @@ const HomeTabs = () => {
     </Tab.Navigator>
   );
 };
-
 export default HomeTabs;

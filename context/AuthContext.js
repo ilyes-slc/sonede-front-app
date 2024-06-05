@@ -1,5 +1,6 @@
 import React, {createContext, useState} from 'react';
 import * as Keychain from 'react-native-keychain';
+import * as SecureStore from "expo-secure-store";
 
 const AuthContext = createContext(null);
 const {Provider} = AuthContext;
@@ -12,7 +13,9 @@ const AuthProvider = ({children}) => {
     });
 
     const logout = async () => {
-        await Keychain.resetGenericPassword();
+        await SecureStore.deleteItemAsync('accessToken');
+        await SecureStore.deleteItemAsync('refreshToken');
+
         setAuthState({
             accessToken: null,
             refreshToken: null,
@@ -21,6 +24,7 @@ const AuthProvider = ({children}) => {
     };
 
     const getAccessToken = () => {
+        console.log("token:"+authState.accessToken);
         return authState.accessToken;
     };
 

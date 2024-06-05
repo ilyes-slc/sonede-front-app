@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import {StyleSheet, Text, TextInput, View, TouchableOpacity, Alert} from 'react-native';
 import { SvgUri } from 'react-native-svg'; // Importing SvgUri
 import { NavigationContainer } from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
@@ -14,32 +14,17 @@ const LoginScreen = ({navigation}) => {
 
 
 
-       const onLogin = async () => {
-    /*       try {
-               const response = await publicAxios.post('/auth/authenticate', {
-                   email,
-                   password,
-               });
+    const onLogin = async () => {
+        console.log('Attempting to log in:', { email, password }); // Log credentials being used (remove password logging in production)
+        try {
+            const response = await publicAxios.post('auth/authenticate', {
+                email,
+                password,
+            });
 
-               const { accessToken, refreshToken } = response.data;
-               authContext.setAuthState({
-                   accessToken,
-                   refreshToken,
-                   authenticated: true,
-               });
-
-               await SecureStore.setItemAsync('jwt', JSON.stringify({ accessToken, refreshToken }));
-           } catch (error) {
-               let message = "Unexpected error occurred.";
-               if (error.response && error.response.data && error.response.data.message) {
-                   message = error.response.data.message;
-               }
-               Alert.alert('Login Failed', message);
-           }*/
-
-            // Static values for accessToken and refreshToken
-            const accessToken = "your-static-access-token";
-            const refreshToken = "your-static-refresh-token";
+            const { access_token: accessToken, refresh_token: refreshToken } = response.data;
+            console.log('Login successful:', accessToken); // Log the successful response data
+            console.log('Login successful:', refreshToken); // Log the successful response data
 
             authContext.setAuthState({
                 accessToken,
@@ -48,8 +33,25 @@ const LoginScreen = ({navigation}) => {
             });
 
             await SecureStore.setItemAsync('jwt', JSON.stringify({ accessToken, refreshToken }));
+        } catch (error) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.error('Error data:', error.response.data);
+                console.error('Error status:', error.response.status);
+                console.error('Error headers:', error.response.headers);
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.error('Error request:', error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error('Error message:', error.message);
+            }
+            console.error('Error config:', error.config);
+        }
 
-       };
+    };
+
 
     return (
         <View style={styles.container}>
